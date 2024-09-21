@@ -5,6 +5,8 @@ const passport = require('passport');
 const bookRoutes = require('./routes/books');
 const authRoutes = require('./routes/auth');
 require('./config/passport')(passport);
+const swaggerJsdoc = require('swagger-jsdoc'); 
+const swaggerUi = require('swagger-ui-express');
 
 dotenv.config();
 
@@ -25,6 +27,44 @@ mongoose.connect(process.env.MONGO_URI, {
 }).catch((error) => {
   console.error('Error al conectar a MongoDB:', error);
 });
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Books API',
+      description: 'API para gestionar libros',
+      contact: {
+        name: 'Víctor',
+        email: 'vcasbayprog@gmail.com',
+      },
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ['./routes/*.js'],
+};
+
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Rutas de autenticación
 app.use('/api/auth', authRoutes);

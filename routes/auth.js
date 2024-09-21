@@ -8,7 +8,52 @@ dotenv.config();
 
 const router = express.Router();
 
-// Registrar un nuevo usuario (solo para admin)
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - username
+ *         - password
+ *         - role
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: ID del usuario
+ *         username:
+ *           type: string
+ *           description: Nombre de usuario
+ *         role:
+ *           type: string
+ *           description: Rol del usuario (admin o user)
+ *       example:
+ *         username: "admin"
+ *         password: "adminpassword"
+ *         role: "admin"
+ */
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registrar un nuevo usuario (solo para admin)
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: Usuario registrado exitosamente
+ *       400:
+ *         description: El usuario ya existe
+ *       500:
+ *         description: Error en el registro
+ */
 router.post('/register', async (req, res) => {
   const { username, password, role } = req.body;
 
@@ -27,7 +72,46 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Iniciar sesión y obtener token JWT
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Iniciar sesión y obtener un token JWT
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Nombre de usuario
+ *               password:
+ *                 type: string
+ *                 description: Contraseña del usuario
+ *             example:
+ *               username: "admin"
+ *               password: "adminpassword"
+ *     responses:
+ *       200:
+ *         description: Inicio de sesión exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: Token JWT generado
+ *       401:
+ *         description: Contraseña incorrecta
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error en el inicio de sesión
+ */
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
