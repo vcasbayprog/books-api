@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const passport = require('passport');
@@ -11,6 +12,11 @@ const swaggerUi = require('swagger-ui-express');
 dotenv.config();
 
 const app = express();
+
+// Habilita CORS
+app.use(cors({
+  origin: 'http://localhost:3000' // Permite solo esta ruta
+}));
 
 // Middleware para parsear JSON
 app.use(express.json());
@@ -62,7 +68,6 @@ const swaggerOptions = {
   apis: ['./routes/*.js'],
 };
 
-
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
@@ -82,4 +87,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
-
